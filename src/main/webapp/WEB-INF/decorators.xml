@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<decorators defaultdir="/decorators">
+	<excludes>
+		<pattern>/api*</pattern>
+		<pattern>/login*</pattern>
+	</excludes>
+	<!-- apply Sitemesh default template -->
+	<decorator name="admin" page="admin.jsp">
+		<pattern>/admin*</pattern>
+	</decorator>
+	<decorator name="user" page="user.jsp">
+		<pattern>/*</pattern>
+	</decorator>
+	<decorator name="seller" page="seller.jsp">
+		<pattern>/seller*</pattern>
+	</decorator>
+	<decorator name="login" page="login.jsp">
+		<pattern>/dang-nhap*</pattern>
+	</decorator>
+	<decorator name="register" page="register.jsp">
+		<pattern>/dang-ky*</pattern>
+	</decorator>
+	<decorator name="forgot_password" page="forgot_password.jsp">
+		<pattern>/quen-mat-khau*</pattern>
+	</decorator>
+	
+</decorators>
