@@ -26,7 +26,7 @@ public class UploadUtils {
 
 		if (storeFolder == null) {
 
-			storeFolder = "D:\\Lập trình web\\Đề tài cuối khóa\\uploads";
+			storeFolder = Constant.DIR;
 
 		}
 
@@ -36,8 +36,7 @@ public class UploadUtils {
 
 		} else {
 
-			storeFilename += "."
-					+ FilenameUtils.getExtension(Paths.get(filePart.getSubmittedFileName()).getFileName().toString());
+			storeFilename += "." + FilenameUtils.getExtension(Paths.get(filePart.getSubmittedFileName()).getFileName().toString());
 
 		}
 

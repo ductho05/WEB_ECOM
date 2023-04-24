@@ -14,6 +14,8 @@ import iostart.Entyti.Product;
 import iostart.Services.IProductServices;
 import iostart.Services.Impl.ProductServicesImpl;
 
+
+
 @MultipartConfig
 
 @WebServlet(urlPatterns = {"/admin-product","/admin-product/filter-active","/admin-product/filter-prohibit","/admin-product/update"})
@@ -119,12 +121,7 @@ public class ProductController extends HttpServlet {
 		req.setAttribute("sizepage", sizepage);
 		req.setAttribute("index", index);
 	}
-	public static void  main(String[] args) throws Exception{
-		
-		IProductServices pr = new ProductServicesImpl();
-		pr.updateStatus(2, true);
-		
-	}
+	
 	protected void update(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		
 		try {
@@ -138,7 +135,7 @@ public class ProductController extends HttpServlet {
 			Product product = productservices.findById(Integer.parseInt(productid));
 			String sta = req.getParameter("status");
 			Boolean status = true;
-			if (sta == "0")
+			if (sta.equals("0"))
 			{
 				status = false;
 			}
@@ -166,5 +163,15 @@ public class ProductController extends HttpServlet {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static void  main(String[] args) throws Exception{
+		
+		IProductServices pr = new ProductServicesImpl();
+		List<Object[]> list = pr.StatisPbyC();
+		for (Object[] item : list) {
+			
+		}
+		
 	}
 }

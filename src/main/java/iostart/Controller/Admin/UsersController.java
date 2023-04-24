@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.HttpRetryException;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -27,6 +28,7 @@ public class UsersController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	IUsersServices userservices = new UsersServicesImpl();
+	ResourceBundle resourceBundle =  ResourceBundle.getBundle("message");
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		
@@ -34,6 +36,13 @@ public class UsersController extends HttpServlet {
 		Users user = new Users();
 		if (url.contains("create"))
 		{
+			String message = req.getParameter("message");
+			String alert = req.getParameter("alert");
+			if (message != null && alert != null)
+			{
+				req.setAttribute("message", resourceBundle.getString(message));
+				req.setAttribute("alert", alert);
+			}
 			req.getRequestDispatcher("/views/admin/users/add-users.jsp").forward(req, resp);
 		}
 		else if (url.contains("delete"))
@@ -41,6 +50,7 @@ public class UsersController extends HttpServlet {
 			delete(req, resp);
 			Users users = new Users();
 			req.setAttribute("users", users);
+			resp.sendRedirect(req.getContextPath()+"/admin-user?index=0");
 		}
 		else if (url.contains("update"))
 		{
@@ -61,18 +71,17 @@ public class UsersController extends HttpServlet {
 		if (url.contains("create"))
 		{
 			insert(req, resp);
-			resp.sendRedirect("/WEB_ECOM/admin-user?index=0");
+			
 		}
 		else if (url.contains("delete"))
 		{
 			delete(req, resp);
-			resp.sendRedirect("/WEB_ECOM/admin-user?index=0");
 		
 		}
 		else if (url.contains("update"))
 		{
 			update(req, resp);
-			resp.sendRedirect("/WEB_ECOM/admin-user?index=0");
+			
 		}
 		else {
 			findAll(req, resp);
@@ -106,12 +115,22 @@ public class UsersController extends HttpServlet {
 			Users user = new Users();
 			
 			BeanUtils.populate(user, req.getParameterMap());
-			
-			String fileName = String.valueOf(user.getUserid()) + System.currentTimeMillis();
+			String email = req.getParameter("email");
+			String username = req.getParameter("username");
+			Users u = userservices.findByUsernameEmail(username, email);			
+			if (u != null)
+			{
+				resp.sendRedirect(req.getContextPath()+"/admin-user/create?message=email_not_exist&alert=danger");
+			}
+			else
+			{
+				String fileName = String.valueOf(user.getUserid()) + System.currentTimeMillis();
 
-			user.setImages(UploadUtils.processUpload("images", req, Constant.DIR + "\\users\\", fileName));
-			
-			userservices.insert(user);
+				user.setImages(UploadUtils.processUpload("images", req, Constant.DIR + "\\users\\", fileName));
+				
+				userservices.insert(user);
+				resp.sendRedirect("/WEB_ECOM/admin-user?index=0");
+			}
 			
 			
 		} catch (Exception e) {
@@ -140,22 +159,11 @@ public class UsersController extends HttpServlet {
 		try {
 
 			request.setCharacterEncoding("UTF-8");
-
 			response.setCharacterEncoding("UTF-8");
-
-// lấy dữ liệu từ jsp bằng BeanUtils
-
 			Users user = new Users();
 
 			BeanUtils.populate(user, request.getParameterMap());
-
-// khởi tạo DAO
-			
-			
 			Users u = userservices.findById(user.getUserid());
-
-// xử lý hình ảnhc
-
 			if (request.getPart("images").getSize() == 0) {
 
 				user.setImages(u.getImages());
@@ -163,40 +171,19 @@ public class UsersController extends HttpServlet {
 			} else {
 
 				if (u.getImages() != null) {
-
-// XOA ANH CU DI
-
 					String fileName = u.getImages();
-
 					File file = new File(Constant.DIR + "\\users\\" + fileName);
-
 					if (file.delete()) {
-
 						System.out.println("Đã xóa thành công");
-
 					} else {
-
 						System.out.println(Constant.DIR + "\\users\\" + fileName);
-
 					}
-
 				}
-
 				String fileName = String.valueOf(user.getUserid()) + System.currentTimeMillis();
-
 				user.setImages(
 						UploadUtils.processUpload("images", request, Constant.DIR + "\\users\\", fileName));
-
-//category.setImages(UploadUtils.processUploadFolderWeb("images", request, "/uploads", fileName));
-
 			}
-
-// khai báo danh sách và gọi hàm update trong service
-
 			userservices.update(user);
-
-// thông báo
-
 			request.setAttribute("user", user);
 
 			request.setAttribute("message", "Cập nhật thành công!");

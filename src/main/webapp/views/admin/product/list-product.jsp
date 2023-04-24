@@ -39,7 +39,8 @@
                         <th>Amount</th>
                         <th>Image</th>
                         <th>Status</th>
-                        <th>Action</th>                
+                        <th>Action</th>
+                                       
                     </tr>
                 </thead>
                 <tbody>
@@ -47,9 +48,9 @@
                     <tr>
                         <td>${item.productId}</td>
                         <td><a href="#">${item.productName}</a></td>                  
-                        <td>${item.price} VNĐ</td>                        
+                        <td><fmt:formatNumber value = "${item.price}" minFractionDigits="0"></fmt:formatNumber> VNĐ</td>                        
                         <td>${item.amount}</td>
-                        <td><c:url value="/image?fname=category/${item.images!=null?item.images:'uploads/abc.jpg'}" var="imgUrl"></c:url>
+                        <td><c:url value="/image?fname=product/${item.images!=null?item.images:'uploads/abc.jpg'}" var="imgUrl"></c:url>
                         <img width="50px" height="50px" src="${imgUrl}">
                         </td>
                         <td>

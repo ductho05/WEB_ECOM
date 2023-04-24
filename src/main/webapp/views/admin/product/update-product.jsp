@@ -16,11 +16,11 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label>ID</label>
-                        <input name="productId" type="text" class="form-control" value="${product.productId}">
+                        <input name="productId" type="text" class="form-control " value="${product.productId}">
                     </div>
                     <div class="form-group">
                         <label>Name</label>
-                        <input name="productName" type="text" class="form-control" value="${product.productName}" required>
+                        <input name="productName" type="text" class="form-control" value="${product.productName}" disabled>
                     </div>
                     <div class="form-group">
                         <label>Status</label>

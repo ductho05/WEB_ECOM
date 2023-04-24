@@ -25,11 +25,18 @@
 		<class>iostart.Entyti.Category</class>
 		<class>iostart.Entyti.Users</class>
 		<class>iostart.Entyti.Product</class>
+		<class>iostart.Entyti.Orders</class>
+		<class>iostart.Entyti.Order_Item</class>
+		<class>iostart.Entyti.Seller</class>
+		<class>iostart.Entyti.Slides</class>
+		<class>iostart.Entyti.Shipper</class>
+		<class>iostart.Entyti.Staff</class>
+		<class>iostart.Entyti.Cart</class>
+		<class>iostart.Entyti.CartItem</class>
 		<properties>
 
 			<property name="javax.persistence.jdbc.url"
-				value="jdbc:sqlserver://localhost:1433;databaseName=ShopOnline" /><!-- 
-				user=sa;password=1234567@a$ -->
+				value="jdbc:sqlserver://localhost:1433;databaseName=ShopOnline" />
 
 			<property name="javax.persistence.jdbc.driver"
 				value="com.microsoft.sqlserver.jdbc.SQLServerDriver" />
@@ -37,13 +44,13 @@
 			<property name="javax.persistence.jdbc.user" value="sa" />
 
 			<property name="javax.persistence.jdbc.password"
-				value="dt23052002" />
+				value="dt23052002"/>
 
 			<property name="hibernate.show_sql" value="true" />
 
 			<property name="hibernate.format_sql" value="true" />
 
-			<property name="hibernate.hbm2ddl.auto" value="update" />
+			<property name="hibernate.hbm2ddl.auto" value="none" />
 
 			<property name="hibernate.dialect"
 				value="org.hibernate.dialect.SQLServer2012Dialect" />

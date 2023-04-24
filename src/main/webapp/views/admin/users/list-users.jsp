@@ -39,7 +39,7 @@
 						<c:forEach items="${list}" var="item">
 							<tr>
 								<td>${item.userid}</td>
-								<td><c:url value="/image?fname=category/${item.images!=null?item.images:'uploads/abc.jpg'}" var="imgUrl"></c:url>
+								<td><c:url value="/image?fname=users/${item.images!=null?item.images:'uploads/abc.jpg'}" var="imgUrl"></c:url>
 								<img class="avatar" width="50px" height="50px" src="${imgUrl}"><a href= "#">${item.fullname}</a></td>
 								<td>${item.phone}</td>
 								<td><c:if test="${item.roleid == 1}">

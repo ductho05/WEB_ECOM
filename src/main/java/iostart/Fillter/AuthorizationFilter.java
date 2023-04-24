@@ -1,6 +1,8 @@
 package iostart.Fillter;
 
 import java.io.IOException;
+import java.util.ResourceBundle;
+
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -24,7 +26,7 @@ public class AuthorizationFilter extends HttpFilter implements Filter {
 	private static final long serialVersionUID = 1L;
 
 	private ServletContext context;
-
+	ResourceBundle resourceBundle = ResourceBundle.getBundle("message");
     public AuthorizationFilter() {
         super();
         // TODO Auto-generated constructor stub
@@ -46,16 +48,46 @@ public class AuthorizationFilter extends HttpFilter implements Filter {
 			Users user = (Users) SessionUtil.getInstance().getValue(request, "Users");
 			if (user != null)
 			{
-				if (user.getRoleid() == 1)
+				if (user.getRoleid() == Integer.parseInt(resourceBundle.getString("Admin")))
 				{
 					filterChain.doFilter(servletRequest, servletResponse);
 				}
-				else if (user.getRoleid() == 3 || user.getRoleid() == 2)
+				else if (user.getRoleid() == Integer.parseInt(resourceBundle.getString("Seller")) || user.getRoleid() == Integer.parseInt(resourceBundle.getString("Customer")))
 				{
 					response.sendRedirect(request.getContextPath()+"/dang-nhap?action=login");
 				}
 			}
 			else {
+				response.sendRedirect(request.getContextPath()+"/dang-nhap?action=login");
+			}
+		}
+		else if (url.startsWith("/WEB_ECOM/seller"))
+		{
+			Users user = (Users) SessionUtil.getInstance().getValue(request, "Users");
+			if (user != null)
+			{
+				if (user.getRoleid() == Integer.parseInt(resourceBundle.getString("Seller")))
+				{
+					filterChain.doFilter(servletRequest, servletResponse);
+				}
+				else if (user.getRoleid() == Integer.parseInt(resourceBundle.getString("Admin")) || user.getRoleid() == Integer.parseInt(resourceBundle.getString("Customer")))
+				{
+					response.sendRedirect(request.getContextPath()+"/dang-nhap?action=login");
+				}
+			}
+			else {
+				response.sendRedirect(request.getContextPath()+"/dang-nhap?action=login");
+			}
+		}
+		else if (url.startsWith("/WEB_ECOM/home/cart") || url.startsWith("/WEB_ECOM/user"))
+		{
+			Users user = (Users) SessionUtil.getInstance().getValue(request, "Users");
+			if (user != null)
+			{
+				filterChain.doFilter(servletRequest, servletResponse);
+			}
+			else
+			{
 				response.sendRedirect(request.getContextPath()+"/dang-nhap?action=login");
 			}
 		}

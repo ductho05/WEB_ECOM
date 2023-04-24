@@ -1,9 +1,11 @@
 package iostart.Controller.Admin;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 
 import java.io.IOException;
-
+import java.io.ObjectOutputStream;
+import java.util.Base64;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -77,11 +79,13 @@ ICategoryServices categoryService = new CategoryServicesImpl();
 
 		}
 
-		findAll(request, response);
+		else {
+			findAll(request, response);
 
-		request.setAttribute("tag", "cate");
+			request.setAttribute("tag", "cate");
 
-		request.getRequestDispatcher("/views/admin/category/list-category.jsp").forward(request, response);
+			request.getRequestDispatcher("/views/admin/category/list-category.jsp").forward(request, response);
+		}
 		
 	}
 
@@ -102,6 +106,7 @@ ICategoryServices categoryService = new CategoryServicesImpl();
 		} else if (url.contains("update")) {
 
 			update(request, response);
+			response.sendRedirect(request.getContextPath()+"/admin-category?index=0");
 
 		} else if (url.contains("delete")) {
 
@@ -112,9 +117,11 @@ ICategoryServices categoryService = new CategoryServicesImpl();
 			request.setAttribute("category", new CategoryController());
 
 		}
-		findAll(request, response);
+		else {
+			findAll(request, response);
 
-		request.getRequestDispatcher("/views/admin/category/list-category.jsp").forward(request, response);
+			request.getRequestDispatcher("/views/admin/category/list-category.jsp").forward(request, response);
+		}
 
 	}
 
@@ -168,9 +175,6 @@ ICategoryServices categoryService = new CategoryServicesImpl();
 
 		try {
 
-// khởi tạo DAO
-
-// khai báo danh sách và gọi hàm findAll() trong dao
 			
 			int count = categoryService.count();
 			
@@ -181,8 +185,6 @@ ICategoryServices categoryService = new CategoryServicesImpl();
 			}
 			String index = request.getParameter("index");
 			List<Category> list = categoryService.findAll(Integer.parseInt(index),3);
-
-// thông báo
 
 			request.setAttribute("categorys", list);
 			request.setAttribute("index",index);
@@ -261,78 +263,35 @@ ICategoryServices categoryService = new CategoryServicesImpl();
 			throws ServletException, IOException {
 
 		try {
-
 			request.setCharacterEncoding("UTF-8");
-
 			response.setCharacterEncoding("UTF-8");
-
-// lấy dữ liệu từ jsp bằng BeanUtils
-
 			Category category = new Category();
-
-			BeanUtils.populate(category, request.getParameterMap());
-
-// khởi tạo DAO
-			
-			
+			BeanUtils.populate(category, request.getParameterMap());			
 			Category oldcate = categoryService.findById(category.getCategoryId());
-
-// xử lý hình ảnhc
-
 			if (request.getPart("images").getSize() == 0) {
-
 				category.setImages(oldcate.getImages());
-
 			} else {
-
 				if (oldcate.getImages() != null) {
-
-// XOA ANH CU DI
-
 					String fileName = oldcate.getImages();
-
 					File file = new File(Constant.DIR + "\\category\\" + fileName);
-
 					if (file.delete()) {
-
 						System.out.println("Đã xóa thành công");
-
 					} else {
-
 						System.out.println(Constant.DIR + "\\category\\" + fileName);
-
 					}
-
 				}
-
 				String fileName = String.valueOf(category.getCategoryId()) + System.currentTimeMillis();
-
 				category.setImages(
 						UploadUtils.processUpload("images", request, Constant.DIR + "\\category\\", fileName));
-
-//category.setImages(UploadUtils.processUploadFolderWeb("images", request, "/uploads", fileName));
-
 			}
-
-// khai báo danh sách và gọi hàm update trong service
-
 			categoryService.update(category);
-
-// thông báo
-
 			request.setAttribute("category", category);
-
 			request.setAttribute("message", "Cập nhật thành công!");
 			request.setAttribute("oldcate", oldcate);
-
 		} catch (Exception e) {
-
 			e.printStackTrace();
-
 			request.setAttribute("error", "Eror: " + e.getMessage());
-
 		}
-
 	}
 	protected void findById(HttpServletRequest request, HttpServletResponse response) throws ServletException,IOException {
 		
@@ -349,10 +308,7 @@ ICategoryServices categoryService = new CategoryServicesImpl();
 	}
 	public static void  main(String[] args) throws Exception{
 		
-		ICategoryServices categorysevices = new CategoryServicesImpl();
-		List<Category> list = categorysevices.findAll(0,3);
-		for (Category category : list) {
-			System.out.printf(category.getCategoryname());
-		}
+		
 	}
+	
 }

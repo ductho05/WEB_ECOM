@@ -39,7 +39,7 @@
 							<td>${item.categoryId}</td>
 							<td><a href="#">${item.categoryname}</a></td>
 							<td><c:url
-									value="/image?fname=category/${item.images!=null?item.images:'uploads/abc.jpg'}"
+									value="/image?fname=category/${item.images}"
 									var="imgUrl"></c:url> <img width="50px" height="50px"
 								src="${imgUrl}"></td>
 							<td> <c:if test="${item.status == true }">

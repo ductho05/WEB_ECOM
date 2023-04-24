@@ -11,6 +11,11 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <form action="create" method="post" enctype="multipart/form-data">
+	            <c:if test="${not empty message }">
+					<div class="alert alert-${alert}" role="alert">
+	  					${message}
+					</div>
+				</c:if>
                 <div class="modal-header">
                     <h4 class="modal-title">Add User</h4>
                 </div>

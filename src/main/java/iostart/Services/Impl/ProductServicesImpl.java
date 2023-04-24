@@ -64,4 +64,74 @@ public class ProductServicesImpl implements IProductServices{
 		productDAO.updateStatus(productId, status);
 	}
 
+	@Override
+	public List<Object[]> StatisPbyC() {
+		
+		return productDAO.StatisPbyC();
+	}
+
+	@Override
+	public List<Object[]> StatisPbyAmount() {
+		
+		return productDAO.StatisPbyAmount();
+	}
+
+	@Override
+	public int SumAmount() {
+		
+		return productDAO.SumAmount();
+	}
+
+	@Override
+	public List<Object[]> findTop10Product() {
+		
+		return productDAO.findTop10Product();
+	}
+
+	@Override
+	public List<Product> findBySellerId(int sellerid, int page, int sizepage) {
+		
+		return productDAO.findBySellerId(sellerid, page, sizepage);
+	}
+
+	@Override
+	public int countBySellerid(int sellerid) {
+		
+		return productDAO.countBySellerid(sellerid);
+	}
+
+	@Override
+	public int countBySellerFilter(int sellerid, Boolean status) {
+		
+		return productDAO.countBySellerFilter(sellerid, status);
+	}
+
+	@Override
+	public List<Product> findBySellerFilter(int sellerid, Boolean status, int page, int sizepage) {
+		
+		return productDAO.findBySellerFilter(sellerid, status, page, sizepage);
+	}
+
+	@Override
+	public int countByCategoryId(int cid) {
+		
+		return productDAO.countByCategoryId(cid);
+	}
+
+	@Override
+	public List<Product> findByCategoryId(int cid, int page, int sizepage) {
+		
+		return productDAO.findByCategoryId(cid, page, sizepage);
+	}
+
+	@Override
+	public List<Product> findByName(String name, int page, int sizepage) {
+		return productDAO.findByName(name, page, sizepage);
+	}
+
+	@Override
+	public int countByName(String name) {
+		
+		return productDAO.countByName(name);
+	}
 }

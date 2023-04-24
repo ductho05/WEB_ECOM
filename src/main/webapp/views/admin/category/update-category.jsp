@@ -40,9 +40,8 @@
 					</div>
 				</div>
 				<div class="modal-footer">
-					<a href=<c:url value = "/admin-category"></c:url>><input type="button" class="btn btn-default"
-						data-dismiss="modal" value="Cancel"></a>
-						 <input type="submit" class="btn btn-success" value="Update">
+					<a href=<c:url value = "/admin-category"></c:url>><input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel"></a>
+				 	<input type="submit" class="btn btn-success" value="Update">
 				</div>
 			</form>
 		</div>
