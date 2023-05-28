@@ -33,26 +33,8 @@
 	                </div>
 	                <div class="row mt-2">
 	                    <div class="col-md-12">
-	                    	<label class="mr-2">ID</label>
-	                    	<input type="text" class="form-control" placeholder="ID" name = "userid" value="${user.userid}">
-	                    	<input type="hidden" class="form-control" name = "password" value="${user.password}">
-	                    	
-	                    	<input type="hidden" class="form-control" name = "status" value="${user.status}">
-	                    	
-	                    	<input type="hidden" class="form-control" name = "roleid" value="${user.roleid}">
-	                    	<input type="hidden" class="form-control" name = "created" value="${user.created}">	                    	
-	                    </div>                 
-	                </div>
-	                <div class="row mt-2">
-	                    <div class="col-md-12">
 	                    	<label class="mr-2">User name</label>
 	                    	<input type="text" class="form-control" placeholder="Tên tài khoản" name = "username" value="${user.username}">	                    	
-	                    </div>                 
-	                </div>
-	                <div class="row mt-2">
-	                    <div class="col-md-12">
-	                    	<label class="mr-2">Email</label>
-	                    	<input type="text" class="form-control" placeholder="Địa chỉ email" name = "email" value="${user.email}">	                    	
 	                    </div>                 
 	                </div>
 	                <div class="row mt-2">
