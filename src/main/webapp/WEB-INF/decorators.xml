@@ -29,5 +29,8 @@
 	<decorator name="store" page="store.jsp">
 		<pattern>/seller-store*</pattern>
 	</decorator>
+	<decorator name="verifyOtp" page="verifyOtp.jsp">
+		<pattern>/verifyotp*</pattern>
+	</decorator>
 	
 </decorators>

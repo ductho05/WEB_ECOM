@@ -19,8 +19,18 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.jasper.tagplugins.jstl.core.Url;
+import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.Validator;
+import org.owasp.esapi.errors.ValidationException;
+
 
 import iostart.Entyti.Category;
 import iostart.Entyti.Order_Item;
@@ -42,6 +52,7 @@ import iostart.Services.Impl.UsersServicesImpl;
 import iostart.util.Constant;
 import iostart.util.SessionUtil;
 import iostart.util.UploadUtils;
+import java.security.SecureRandom;
 
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -156,8 +167,22 @@ public class HomeController extends HttpServlet {
 			Users user = userservices.findByUsernamePassRole(username, password);
 			if (user != null) {
 				SessionUtil.getInstance().putValue(req, "Users", user);
-				if (user.getRoleid() == Integer.parseInt(resourceBundle.getString("Admin"))) {
+				if (user.getRoleid() == Integer.parseInt(resourceBundle.getString("Admin")))
+				{
+					SessionUtil.getInstance().putValue(req, "Users", user);
 					resp.sendRedirect(req.getContextPath() + "/admin-home?flag=0");
+				}				
+				else if (user.getRoleid() == Integer.parseInt(resourceBundle.getString("Customer")) 
+						|| user.getRoleid() == Integer.parseInt(resourceBundle.getString("Seller")))
+				{
+					String otp = generateOTP(6);
+					String email = user.getEmail();
+					sendOTPByEmail(email, otp);
+					//Lưu mã OTP vào session
+					HttpSession session = req.getSession();
+					session.setAttribute("OTP", otp); //otp là mã OTP vừa được tạo ra
+					session.setAttribute("user", user);
+					resp.sendRedirect(req.getContextPath() + "/verifyotp");
 				} else if (user.getRoleid() == Integer.parseInt(resourceBundle.getString("Customer"))
 						|| user.getRoleid() == Integer.parseInt(resourceBundle.getString("Seller")) && csrfToken != null && csrfToken.equals(sessionToken)) {
 					resp.sendRedirect(req.getContextPath() + "/home?index=0&filter=tat-ca&cid=0");
@@ -399,6 +424,56 @@ public class HomeController extends HttpServlet {
 		req.setAttribute("cid", c);
 	}
 
+	//Gửi email chứa mã OTP đến email của người dùng
+	public static void sendOTPByEmail(String email, String otp) {
+		// email và password được khai báo trong class constant
+	    String fromEmail = Constant.emailShop; 
+	    String password = Constant.passwordEmailShop; 
+
+	    String toEmail = email; //Email của người dùng
+	    String subject = "Mã OTP xác thực";
+	    String message = "Mã OTP của bạn là: " + otp;
+
+	    //Cấu hình SMTP server cho email của bạn
+	    Properties props = new Properties();
+	    props.put("mail.smtp.auth", "true");
+	    props.put("mail.smtp.starttls.enable", "true");
+	    props.put("mail.smtp.host", "smtp.gmail.com");
+	    props.put("mail.smtp.port", "587");
+
+	    //Đăng nhập vào tài khoản email
+	    Session session = Session.getInstance(props, new javax.mail.Authenticator() {
+	        protected PasswordAuthentication getPasswordAuthentication() {
+	            return new PasswordAuthentication(fromEmail, password);
+	        }
+	    });
+
+	    try {
+	        //Tạo message email
+	        Message emailMessage = new MimeMessage(session);
+	        emailMessage.setFrom(new InternetAddress(fromEmail));
+	        emailMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(toEmail));
+	        emailMessage.setSubject(subject);
+	        emailMessage.setText(message);
+
+	        //Gửi email
+	        Transport.send(emailMessage);
+	        System.out.println("Đã gửi mã OTP đến email của người dùng!");
+	    } catch (MessagingException e) {
+	        e.printStackTrace();
+	    }
+	}
+
+	//Tạo mã OTP với độ dài cho trước
+	public static String generateOTP(int length) {
+	    String numbers = "0123456789";
+	    SecureRandom random = new SecureRandom();
+	    StringBuilder sb = new StringBuilder(length);
+	    for (int i = 0; i < length; i++) {
+	        sb.append(numbers.charAt(random.nextInt(numbers.length())));
+	    }
+	    return sb.toString();
+	}
 	public static void main(String[] args) throws Exception {
 
 		IProductServices p = new ProductServicesImpl();
