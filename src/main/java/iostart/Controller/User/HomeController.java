@@ -89,8 +89,15 @@ public class HomeController extends HttpServlet {
 			RequestDispatcher rq = req.getRequestDispatcher("/views/login.jsp");
 			rq.forward(req, resp);
 		} else if (action != null && action.equals("logout")) {
+			HttpSession session = req.getSession(false);
+			if (session != null) {
+				// Remove session attribute and invalidate session
+				session.removeAttribute("Users");
+				session.invalidate();
+			}
 			SessionUtil.getInstance().removeValue(req, "Users");
 			resp.sendRedirect(req.getContextPath() + "/home?index=0&filter=tat-ca&cid=0");
+
 		} else if (action != null && action.equals("register")) {
 			String message = req.getParameter("message");
 			String alert = req.getParameter("alert");
@@ -167,6 +174,24 @@ public class HomeController extends HttpServlet {
 			Users user = userservices.findByUsernamePassRole(username, password);
 			if (user != null) {
 				SessionUtil.getInstance().putValue(req, "Users", user);
+
+				HttpSession oldSession = req.getSession(false);
+				if (oldSession != null) {
+					oldSession.invalidate();
+				}
+
+				HttpSession newSession = req.getSession(true);
+				newSession.setAttribute("Users", user);
+
+//				Cookie sessionCookie = new Cookie("loggedInUser", (String) newSession.getAttribute("loggedInUser"));
+//				sessionCookie.setHttpOnly(true);
+//				sessionCookie.setMaxAge(3600);
+//				sessionCookie.setPath("/");
+//				sessionCookie.setSecure(true);
+//				sessionCookie.setSameSite("Strict");
+//
+//				resp.addCookie(sessionCookie);
+
 				if (user.getRoleid() == Integer.parseInt(resourceBundle.getString("Admin")))
 				{
 					SessionUtil.getInstance().putValue(req, "Users", user);
@@ -208,6 +233,11 @@ public class HomeController extends HttpServlet {
 				resp.sendRedirect(req.getContextPath()
 						+ "/dang-ky?action=register&message=username_email-already_exist&alert=danger");
 			}
+			else if (!pass1.matches("^(?=.{8,}$)(?=.*[A-Z])(?=.*[0-9])(?=.*[@$!%*?&]).*$")) {
+				resp.sendRedirect(
+						req.getContextPath() + "/dang-ky?action=register&message=invalid_password&alert=danger");
+			}
+
 
 			else if (pass1.equals(pass2)) {
 				Date d = Calendar.getInstance().getTime();
@@ -246,7 +276,12 @@ public class HomeController extends HttpServlet {
 					userservices.update(u);
 					resp.sendRedirect(req.getContextPath() + "/dang-nhap?action=login");
 
-				} else if (!fg_pass1.equals(fg_pass2)) {
+				} else if (!fg_pass1.matches("^(?=.{8,}$)(?=.*[A-Z])(?=.*[0-9])(?=.*[@$!%*?&]).*$")) {
+					resp.sendRedirect(req.getContextPath()
+							+ "/quen-mat-khau?action=forgot_password&message=invalid_password&alert=danger");
+				}
+
+				 else if (!fg_pass1.equals(fg_pass2)) {
 					resp.sendRedirect(req.getContextPath()
 							+ "/quen-mat-khau?action=forgot_password&message=password_not_confilm&alert=danger");
 				}

@@ -47,7 +47,7 @@
                     <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
                     <form action="cart-update-quantity" method="post">
                       <input type = "hidden" name = "cartitemid" value = "${item.id}">
-                      <input type="number" name = "quantity" value="${item.quantity}" aria-label="Search" class="form-control" style="width: 100px;">
+                      <input min="1" type="number" name = "quantity" value="${item.quantity}" aria-label="Search" class="form-control" style="width: 100px;">
                       <button class="btn btn-primary" type="submit" style="margin-top: 5px;padding-right: 37px;padding-left: 37px;">Lưu               		
               		  </button>
               		</form>

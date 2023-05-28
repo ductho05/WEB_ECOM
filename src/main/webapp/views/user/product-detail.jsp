@@ -28,7 +28,7 @@
             <p>${product.description}</p>
             <form class="d-flex justify-content-left" action="cart-addtocart" method="post">
               <input type="hidden" name = "pid" value = "${product.productId}">
-              <input type="number" name = "quantity" value = "1" aria-label="Search" class="form-control" style="width: 100px;">
+              <input min="1" type="number" name = "quantity" value = "1" aria-label="Search" class="form-control" style="width: 100px;">
               <button class="btn btn-primary btn-md my-0 p" type="submit" style="margin-left: 10px;">Thêm vào giỏ hàng
                 <i class="fas fa-shopping-cart ml-1"></i>
               </button>
