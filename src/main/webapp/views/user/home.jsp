@@ -34,7 +34,7 @@
             </c:forEach>          
           </ul>
 
-          <form class="form-inline" action="search-product?index=0" method="get">
+          <form maxlength="50" class="form-inline" action="search-product?index=0" method="get">
             <div class="md-form my-0">
               <input type="hidden" value="0" name = "index">
               <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" name = "name">

@@ -43,6 +43,8 @@ import iostart.util.Constant;
 import iostart.util.SessionUtil;
 import iostart.util.UploadUtils;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 @MultipartConfig
 @WebServlet(urlPatterns = { "/home", "/dang-nhap", "/dang-xuat", "/dang-ky", "/quen-mat-khau", "/home/product-detail",
 		"/search-product", "/user-profile", "/user-order-detail" })
@@ -143,14 +145,21 @@ public class HomeController extends HttpServlet {
 		if (action != null && action.equals("login")) {
 			String username = req.getParameter("username");
 			String password = req.getParameter("password");
+//			crypto failures
 
+//			crsf
+			String csrfToken  = req.getParameter("csrfToken");
+			String sessionToken = (String) SessionUtil.getInstance().getValue(req, "csrfToken");
+			String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+		
+			boolean isPasswordCorrect = BCrypt.checkpw(password, hashedPassword);
 			Users user = userservices.findByUsernamePassRole(username, password);
 			if (user != null) {
 				SessionUtil.getInstance().putValue(req, "Users", user);
 				if (user.getRoleid() == Integer.parseInt(resourceBundle.getString("Admin"))) {
 					resp.sendRedirect(req.getContextPath() + "/admin-home?flag=0");
 				} else if (user.getRoleid() == Integer.parseInt(resourceBundle.getString("Customer"))
-						|| user.getRoleid() == Integer.parseInt(resourceBundle.getString("Seller"))) {
+						|| user.getRoleid() == Integer.parseInt(resourceBundle.getString("Seller")) && csrfToken != null && csrfToken.equals(sessionToken)) {
 					resp.sendRedirect(req.getContextPath() + "/home?index=0&filter=tat-ca&cid=0");
 				}
 			}
@@ -165,7 +174,7 @@ public class HomeController extends HttpServlet {
 			String fullname = req.getParameter("fullname");
 			String pass1 = req.getParameter("password1");
 			String pass2 = req.getParameter("password2");
-
+			String hashedPassword = BCrypt.hashpw(pass1, BCrypt.gensalt());
 			Users users = userservices.findByUsernameEmail(user_name, email);
 			if (user_name.trim().length() == 0 || email.trim().length() == 0 || fullname.trim().length() == 0
 					|| pass1.trim().length() == 0 || pass2.trim().length() == 0) {
@@ -183,7 +192,7 @@ public class HomeController extends HttpServlet {
 				user.setUsername(user_name);
 				user.setEmail(email);
 				user.setFullname(fullname);
-				user.setPassword(pass1);
+				user.setPassword(hashedPassword);
 				user.setRoleid(Integer.parseInt(resourceBundle.getString("Customer")));
 				user.setStatus(true);
 				user.setCreated(date);
@@ -311,28 +320,43 @@ public class HomeController extends HttpServlet {
 		req.setCharacterEncoding("UTF-8");
 		resp.setCharacterEncoding("UTF-8");
 		String name = req.getParameter("name");
-		int count = productservices.countByName(name);
-		int sizepage = count / 8;
-		if (count % 8 != 0) {
-			sizepage++;
+		String errorString = null;
+		if(name.length() < 50) {
+			int count = productservices.countByName(name);
+			int sizepage = count/8;
+			if (count % 8 != 0)
+			{
+				sizepage++;
+			}
+			int index = Integer.parseInt(req.getParameter("index"));
+			List<Product> list = productservices.findByName(name, index, 8);
+			
+			req.setAttribute("list", list);
+			req.setAttribute("index", index);
+			req.setAttribute("count", count);
+			req.setAttribute("sizepage", sizepage);
 		}
-		int index = Integer.parseInt(req.getParameter("index"));
-		List<Product> list = productservices.findByName(name, index, 8);
-
-		req.setAttribute("list", list);
-		req.setAttribute("index", index);
-		req.setAttribute("count", count);
-		req.setAttribute("sizepage", sizepage);
+		else {
+			System.out.println("Loi nhap qua dai");
+			errorString = "Độ dài tìm kiếm quá dài, vui lòng nhập lại";
+			req.setAttribute("errorString", errorString);
+		}
 	}
 
 	protected void findbyId(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
 		req.setCharacterEncoding("UTF-8");
 		resp.setCharacterEncoding("UTF-8");
-		int pid = Integer.parseInt(req.getParameter("pid"));
-		Product product = productservices.findById(pid);
-		req.setAttribute("product", product);
-
+		String pidString = req.getParameter("pid");
+    int pid;
+    try {
+      pid = Integer.parseInt(pidString);
+    } catch (Exception e) {
+      // TODO: handle exception
+      System.out.println("lỗi nhập không đúng đinh dạng là số");
+      resp.sendRedirect(req.getContextPath()+"/home?index=0&filter=tat-ca&cid=0");
+      return;
+    }
 	}
 
 	protected void findAll(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

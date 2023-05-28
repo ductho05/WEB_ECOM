@@ -8,6 +8,12 @@
 <title>Login</title>
 </head>
 <body>
+	<%
+String token = UUID.randomUUID().toString();
+
+SessionUtil.getInstance().putValue(request, "csrfToken", token);
+
+%>
 	<section class="vh-100 gradient-custom">
 		<div class="container py-5 h-100">
 			<div class="row d-flex justify-content-center align-items-center h-100">
@@ -16,6 +22,7 @@
 						<div class="card-body p-5 text-center">
 							<div class="mb-md-5 mt-md-4 pb-5">
 								<form action="" method="post">
+									<input type="hidden" name="csrfToken" value="<%= token %>">
 									<c:if test="${not empty message }">
 									<div class="alert alert-${alert}" role="alert">
   										${message}
